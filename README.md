@@ -3,11 +3,11 @@
 * build shellcode:
 
 ```shell
-make shellcode T=linux/reverse64IPv4
+make shellcode T=linux.reverse64IPv4
 
 ```
 
-* build run elf:
+* build elf for run shellcode:
 
 ```shell
 make run T=linux
