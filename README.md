@@ -49,3 +49,9 @@ char C_shellcode[] =
     "\x31\xf6\x31\xd2\x0f\x05"
 
 ```
+
+## refs
+
+[shellcode for CTF style exploitation](https://github.com/osirislab/Shellcode)
+
+[Shellcodes database for study cases](http://shell-storm.org/shellcode/)
