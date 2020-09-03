@@ -1,31 +1,21 @@
 # idhyt
-# make build SC=linux/reverse64IPv4
-# make test
-# ./test ./shellcode
+# make build T=linux.reverse64IPv4
+# make run
+# ./run ./shellcode
 
-INCLUDEDIR = ./src/include/
-INCLUDE    = -I $(INCLUDEDIR)
-# SFLAGS     = -D SYSCALL
-ifneq (,$(findstring 64,$(SC)))
-    SFLAGS     = -D SYSCALL
-else
-    SFLAGS     = -D INT80
-endif
-
-shellcode = ./src/$(SC).s
-
+TARGET       = $(T)
 
 .PHONY: shellcode run
 
-all: sc elf
+all: shellcode run
 
 shellcode:
-	@echo "\033[33m[+] Build shellcode for $(shellcode) \033[0m" 
-	nasm $(shellcode) $(INCLUDE) $(SFLAGS) -o shellcode
+	@cd asm; make build T=$(TARGET)
+	@echo "\033[32m[+] build success.\033[0m" 
 
-elf:
-	@echo "\033[33m[+] Build elf to run shellcode \033[0m" 
-	gcc -fno-stack-protector -z execstack run.c -o run
+run:
+	@cd tools; make build T=$(TARGET)
+	@echo "\033[32m[+] build success.\033[0m" 
 
 clean:
 	rm -rf shellcode run

