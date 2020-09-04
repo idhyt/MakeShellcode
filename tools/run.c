@@ -51,7 +51,7 @@ void print(char* data, int len) {
   }
 }
 
-void run_sc(char* sc) {
+int run_sc(char* sc) {
   /* ret is a function pointer */
   int (*func)();
   printf("Bytes: %d\n", (int)sizeof(sc));
@@ -61,7 +61,7 @@ void run_sc(char* sc) {
       shellcode is type caste as a function
       execute, as a function, shellcode[]
    */
-  (int)(*func)();
+  return (int)(*func)();
   /* exit() */
 }
 
@@ -89,6 +89,5 @@ int main(int argc, char** argv) {
   print(shellcode, size);
   printf("---------------- end ----------------\n\n");
 
-  run_sc(shellcode);
-  return 0;
+  return run_sc(shellcode);
 }
