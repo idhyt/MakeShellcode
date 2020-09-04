@@ -6,6 +6,9 @@ INCLUDE     = -I $(INCLUDEDIR)
 TFILE       = $(T)
 TARCH       = $(basename $(TFILE))
 OUTF        = ../shellcode
+CC          =
+SFLAGS      =
+BCMD        =
 
 # build for shellcode
 
@@ -13,12 +16,13 @@ ifeq (0, $(words $(TFILE)))
     $(error target not found! usage like: make build T=linux.reverse64IPv4)
 endif
 
-BF = ./$(subst .,/,$(TFILE)).s
+BF = ./$(subst .,/,$(TFILE)).asm
 $(info [*] build shellcode for $(BF))
 
 BA =
-# set linux arch SFLAGS
+# set linux arch build cmd
 ifeq ($(TARCH), linux)
+    CC      = nasm
     ifneq (,$(findstring 64,$(TFILE)))
         SFLAGS     = -D SYSCALL
         BA         = linux64
@@ -26,24 +30,32 @@ ifeq ($(TARCH), linux)
         SFLAGS     = -D INT80
         BA         = linux
     endif
-endif
+    BCMD    = $(CC) $(BF) $(INCLUDE) $(SFLAGS) -o $(OUTF)
 
-# set arm arch SFLAGS
-ifeq ($(TARCH), arm)
+# set android arch build cmd
+else ifeq ($(TARCH), android)
     ifneq (,$(findstring 64,$(TFILE)))
-        SFLAGS     = -D arm64
+        CC         = aarch64-linux-android-as
+        LD         = aarch64-linux-android-ld
+        OC         = aarch64-linux-android-objcopy
         BA         = arm64
     else
-        SFLAGS     = -D arm32
+        CC         = arm-linux-androideabi-as
+        LD         = arm-linux-androideabi-ld
+        OC         = arm-linux-androideabi-objcopy
         BA         = arm32
     endif
+    BCMD    = $(CC) $(BF) -o $(OUTF).S; $(LD) $(OUTF).S -o $(OUTF).elf; $(OC) -O binary $(OUTF).elf $(OUTF)
+else
+    $(error set arch error, $(TARCH) not support!)
 endif
 
-$(info [+] arch: $(BA), flags: $(SFLAGS))
+
+$(info [+] CC: $(CC), arch: $(BA), flags: $(SFLAGS))
 
 # $(error exit)
 
 .PHONY: build
 
 build:
-	nasm $(BF) $(INCLUDE) $(SFLAGS) -o $(OUTF)
+	$(BCMD)

