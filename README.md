@@ -4,13 +4,16 @@
 
 ```shell
 make shellcode T=linux.reverse64IPv4
-
+or
+make shellcode T=android.shell32
 ```
 
 * build elf for run shellcode:
 
 ```shell
 make run T=linux
+or
+make run T=arm
 ```
 
 * run shellcode:
