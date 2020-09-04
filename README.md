@@ -5,7 +5,7 @@
 ```shell
 make shellcode T=linux.reverse64IPv4
 or
-make shellcode T=android.shell32
+make shellcode T=android.cmd32
 ```
 
 * build elf for run shellcode:
