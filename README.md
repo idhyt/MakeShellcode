@@ -58,3 +58,5 @@ char C_shellcode[] =
 [shellcode for CTF style exploitation](https://github.com/osirislab/Shellcode)
 
 [Shellcodes database for study cases](http://shell-storm.org/shellcode/)
+
+[Linux System Call Table](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md)

@@ -1,5 +1,7 @@
 /* @idhyt
     android arm shell_reverse_tcp
+    parameters      r0-r6
+    system call     r7
 */
 
 .globl _start
