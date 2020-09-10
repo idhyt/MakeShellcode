@@ -1,13 +1,10 @@
 # idhyt
 # make build T=linux.reverse64IPv4
 
-INCLUDEDIR  = ./include/
-INCLUDE     = -I $(INCLUDEDIR)
 TFILE       = $(T)
 TARCH       = $(basename $(TFILE))
 OUTF        = ../shellcode
 CC          =
-SFLAGS      =
 BCMD        =
 
 # build for shellcode
@@ -24,13 +21,11 @@ BA =
 ifeq ($(TARCH), linux)
     CC      = nasm
     ifneq (,$(findstring 64,$(TFILE)))
-        SFLAGS     = -D SYSCALL
         BA         = linux64
     else
-        SFLAGS     = -D INT80
         BA         = linux
     endif
-    BCMD    = $(CC) $(BF) $(INCLUDE) $(SFLAGS) -o $(OUTF)
+    BCMD    = $(CC) $(BF) -o $(OUTF)
 
 # set android arch build cmd
 else ifeq ($(TARCH), android)
@@ -51,7 +46,7 @@ else
 endif
 
 
-$(info [+] CC: $(CC), arch: $(BA), flags: $(SFLAGS))
+$(info [+] CC: $(CC), arch: $(BA))
 
 # $(error exit)
 
