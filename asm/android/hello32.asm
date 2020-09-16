@@ -1,6 +1,17 @@
 /* entry point. */
 .globl _start
 _start:
+    # fork
+    MOV             R7, #2
+    SVC             0 
+    CMP             R0, #0
+    BEQ             _child
+    # exit parent
+    MOV             R0, #0
+    MOV             R7, #1
+    SVC             0
+
+_child:
     /* syscall write(int fd, const void *buf, size_t count) */
     mov     %r0, $1     /* fd := STDOUT_FILENO */
     ldr     %r1, =_msg   /* buf := msg */
