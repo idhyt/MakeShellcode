@@ -7,7 +7,7 @@
 .global _start
 
 _start:
-
+/*
     # clone
     mov             x8, #220
     svc             0 
@@ -18,6 +18,7 @@ _start:
     svc             0
 
 _child:
+*/
     /* socket(AF_INET, SOCK_STREAM, IPPROTO_IP) */
     mov     x2, 0
     mov     x1, 1
